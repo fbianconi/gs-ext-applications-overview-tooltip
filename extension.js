@@ -26,14 +26,12 @@ function init() {}
 
 function enable() {
     _tooltips = new Array();
-
     // Enabling tooltips after _appIcons has been populated
     let appIcons = Main.overview._viewSelector._appsPage.get_child()
             .get_child()._delegate._view._appIcons;
     for (let i in appIcons) {
         _connect(appIcons[i].actor);
     }
-
     // monkeypatching for the load time and for the search overview tooltips
     _old_addItem = imports.ui.iconGrid.IconGrid.prototype.addItem;
     imports.ui.iconGrid.IconGrid.prototype.addItem = function(actor){
@@ -97,12 +95,15 @@ function _showTooltip(actor) {
         //app and settings searchs results
         icontext = actor._delegate.metaInfo['name'];
         should_display = actor._delegate._content._delegate.icon.label.get_clutter_text().get_layout().is_ellipsized();
-    }else{
-        //locations search results
+    }else if (actor._delegate._content.label_actor){
+        //locations and other (generic) search results (wanda wouldn't work)
         icontext = actor._delegate.metaInfo['name'];
-        should_display = actor.label_actor.get_clutter_text().get_layout().is_ellipsized();
+        should_display = actor._delegate._content.label_actor.get_clutter_text().get_layout().is_ellipsized();
     }
-    if (!should_display) return;
+
+    if (!should_display){
+        return;
+    }
 
     if (!_label) {
         _label = new St.Label({
