@@ -22,13 +22,10 @@ let _labelShowing = false;
 
 function init() {}
 
-
-
 function enable() {
     _tooltips = new Array();
     // Enabling tooltips after _appIcons has been populated
-    let appIcons = Main.overview._viewSelector._appsPage.get_child()
-            .get_child()._delegate._view._appIcons;
+    let appIcons = Main.overview._viewSelector._appDisplay._views[1].view._items;
     for (let i in appIcons) {
         _connect(appIcons[i].actor);
     }
@@ -36,7 +33,7 @@ function enable() {
     _old_addItem = imports.ui.iconGrid.IconGrid.prototype.addItem;
     imports.ui.iconGrid.IconGrid.prototype.addItem = function(actor){
         _connect(actor);
-        // original part of the function I'm overwriting (for real this time)
+        // original part of the function I'm overwriting
         _old_addItem.apply(this, arguments);
     };
 }
